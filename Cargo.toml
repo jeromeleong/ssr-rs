@@ -47,46 +47,47 @@ rocket = "0.5.0-rc.2"
 
 env_logger = "0.9.0"
 
-[[example]]
-name = "actix"
-path = "examples/actix.rs"
-
-[[example]]
-name = "tide"
-path = "examples/tide.rs"
-
-[[example]]
-name = "actix-with-props"
-path = "examples/actix_with_initial_props.rs"
-
-[[example]]
-name = "rocket"
-path = "examples/rocket.rs"
-
-[[example]]
-name = "warp"
-path = "examples/warp.rs"
-
-[[example]]
-name = "run"
-path = "examples/run.rs"
-
-[[example]]
-name = "axum"
-path = "examples/axum.rs"
-
-[[example]]
-name = "multi"
-path = "examples/multi-thread.rs"
-
-[[example]]
-name = "vite-react"
-path = "examples/vite-react/server.rs"
-
-[[example]]
-name = "webpack-react"
-path = "examples/webpack-react/server.rs"
-
-[[example]]
-name = "rspack-react"
-path = "examples/rspack-react/server.rs"
+#[[example]]
+#name = "actix"
+#path = "examples/actix.rs"
+#
+#[[example]]
+#name = "tide"
+#path = "examples/tide.rs"
+#
+#[[example]]
+#name = "actix-with-props"
+#path = "examples/actix_with_initial_props.rs"
+#
+#[[example]]
+#name = "rocket"
+#path = "examples/rocket.rs"
+#
+#[[example]]
+#name = "warp"
+#path = "examples/warp.rs"
+#
+#[[example]]
+#name = "run"
+#path = "examples/run.rs"
+#
+#[[example]]
+#name = "axum"
+#path = "examples/axum.rs"
+#
+#[[example]]
+#name = "multi"
+#path = "examples/multi-thread.rs"
+#
+#[[example]]
+#name = "vite-react"
+#path = "examples/vite-react/server.rs"
+#
+#[[example]]
+#name = "webpack-react"
+#path = "examples/webpack-react/server.rs"
+#
+#[[example]]
+#name = "rspack-react"
+#path = "examples/rspack-react/server.rs"
+#
