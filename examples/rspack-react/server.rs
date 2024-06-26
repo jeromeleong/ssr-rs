@@ -10,7 +10,8 @@ thread_local! {
     static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
             Ssr::from(
                 read_to_string(Path::new("./dist/ssr/index.js").to_str().unwrap()).unwrap(),
-                "SSR"
+                "SSR",
+                "cjs"
                 ).unwrap()
             )
 }

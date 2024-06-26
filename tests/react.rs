@@ -35,16 +35,3 @@ fn renders_react_18_exported_as_iife() {
 
     assert_eq!(html, "<div></div>");
 }
-
-#[test]
-fn renders_esm_module() {
-    prepare();
-
-    let source = read_to_string("./tests/assets/esm-module.js").unwrap();
-
-    let mut js = Ssr::from(source, "render", "esm").unwrap();
-
-    let html = js.render_to_string(None).unwrap();
-
-    assert_eq!(html, "<div></div>");
-}

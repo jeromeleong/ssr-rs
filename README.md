@@ -36,7 +36,7 @@ fn main() {
 
     let source = read_to_string("./path/to/build.js").unwrap();
 
-    let mut js = Ssr::new(&source, "entryPoint").unwrap();
+    let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
 
     let html = js.render_to_string(None).unwrap();
     
@@ -93,7 +93,7 @@ fn main() {
 
     let source = read_to_string("./path/to/build.js").unwrap();
 
-    let mut js = Ssr::new(&source, "entryPoint").unwrap();
+    let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
 
     let html = js.render_to_string(Some(&props)).unwrap();
 
@@ -123,7 +123,8 @@ thread_local! {
     static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
             Ssr::from(
                 read_to_string("./client/dist/ssr/index.js").unwrap(),
-                "SSR"
+                "SSR",
+                "cjs"
                 ).unwrap()
             )
 }
@@ -172,3 +173,22 @@ This project is licensed under the MIT License - see the <a href="https://github
 <p align="center">
   <img src="https://raw.githubusercontent.com/Valerioageno/ssr-rs/main/logo.png">
 </p>
+
+## Upgrade from 0.5.4 or below
+
+If you are upgrading from version 0.5.4 or below, you need to modify the `Ssr::from` function calls in your code. The new `Ssr::from` function now takes an additional `module_type` argument to specify the type of JavaScript module you are using. 
+
+### Example modification
+
+**Before:**
+```rust
+let mut js = Ssr::from(source, "entryPoint").unwrap();
+```
+
+**After:**
+```rust
+let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
+```
+
+Make sure to update all `Ssr::from` calls in your code to include this third argument.
+

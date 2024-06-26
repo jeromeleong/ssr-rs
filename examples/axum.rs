@@ -8,7 +8,8 @@ thread_local! {
     static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
             Ssr::from(
                 read_to_string("./client/dist/ssr/index.js").unwrap(),
-                "SSR"
+                "SSR",
+                "cjs"
                 ).unwrap()
             )
 }
@@ -20,7 +21,7 @@ async fn main() {
     // build our application with a single route
     let app = Router::new().route("/", get(root));
 
-    // run our app with hyper, listening globally on port 3000
+    // run our app with hyper, listening globally on port 8080
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
