@@ -1,4 +1,3 @@
-// TODO: replace hashmap with more performant https://nnethercote.github.io/perf-book/hashing.html
 use std::collections::HashMap;
 use v8::Local;
 
@@ -25,37 +24,13 @@ impl<'s, 'i> Ssr<'s, 'i>
 where
     's: 'i,
 {
-    /// Initialize a V8 js engine instance. It's mandatory to call it before
-    /// any call to V8. The Ssr module needs this function call before any other
-    /// operation.
     pub fn create_platform() {
         let platform = v8::new_default_platform(0, false).make_shared();
         v8::V8::initialize_platform(platform);
         v8::V8::initialize();
     }
 
-    /// It creates a new SSR instance.
-    ///
-    /// This function is expensive and it should be called as less as possible.
-    ///
-    /// Even though V8 allows multiple threads the Ssr struct created with this call can be accessed by just
-    /// the thread that created it.
-    ///
-    /// Multiple instances are allowed.
-    ///
-    /// Entry point is the JS element that the bundler exposes. It has to be an empty string in
-    /// case the bundle is exported as IIFE.
-    ///
-    /// Check the examples <a href="https://github.com/Valerioageno/ssr-rs/tree/main/examples/vite-react">vite-react</a> (for the IIFE example) and
-    /// <a href="https://github.com/Valerioageno/ssr-rs/tree/main/examples/webpack-react">webpack-react</a> (for the bundle exported as variable).
-    ///
-    /// See the examples folder for more about using multiple parallel instances for multi-threaded
-    /// execution.
-    pub fn from(
-        source: String,
-        entry_point: &str,
-        module_type: &str,
-    ) -> Result<Self, &'static str> {
+    pub fn from(source: &str, entry_point: &str, module_type: &str) -> Result<Self, &'static str> {
         let isolate = Box::into_raw(Box::new(v8::Isolate::new(v8::CreateParams::default())));
 
         let handle_scope = unsafe { Box::into_raw(Box::new(v8::HandleScope::new(&mut *isolate))) };
@@ -69,7 +44,7 @@ where
 
         match module_type {
             "esm" => {
-                let module = load_module(scope, &source, "module.js")?;
+                let module = load_module(scope, source, "module.js")?;
                 let exports = module.get_module_namespace().to_object(scope).unwrap();
                 let mut fn_map: HashMap<String, v8::Local<v8::Function>> = HashMap::new();
 
@@ -92,7 +67,7 @@ where
                 });
             }
             "cjs" => {
-                load_commonjs(scope, &source, "module.js")?;
+                load_commonjs(scope, source, "module.js")?;
             }
             _ => {
                 return Err("Unsupported module type");
@@ -125,40 +100,15 @@ where
 
         let mut fn_map: HashMap<String, v8::Local<v8::Function>> = HashMap::new();
 
-        if let Some(props) = object.get_own_property_names(scope, Default::default()) {
-            fn_map = match Some(props)
-                .iter()
-                .enumerate()
-                .map(
-                    |(i, &p)| -> Result<(String, v8::Local<v8::Function>), &'static str> {
-                        let name = match p.get_index(scope, i as u32) {
-                            Some(val) => val,
-                            None => return Err("Failed to get function name"),
-                        };
-
-                        let mut scope = v8::EscapableHandleScope::new(scope);
-
-                        let func = match object.get(&mut scope, name) {
-                            Some(val) => val,
-                            None => return Err("Failed to get function from obj"),
-                        };
-
-                        let func = unsafe { v8::Local::<v8::Function>::cast(func) };
-
-                        let fn_name = match name.to_string(&mut scope) {
-                            Some(val) => val.to_rust_string_lossy(&mut scope),
-                            None => return Err("Failed to find function name"),
-                        };
-
-                        Ok((fn_name, scope.escape(func)))
-                    },
-                )
-                // TODO: collect directly the values into a map
-                .collect()
-            {
-                Ok(val) => val,
-                Err(err) => return Err(err),
-            }
+        let props = object
+            .get_own_property_names(scope, Default::default())
+            .unwrap();
+        for i in 0..props.length() {
+            let key = props.get_index(scope, i).unwrap();
+            let key_str = key.to_string(scope).unwrap().to_rust_string_lossy(scope);
+            let val = object.get(scope, key).unwrap();
+            let func = Local::<v8::Function>::try_from(val).unwrap();
+            fn_map.insert(key_str, func);
         }
 
         Ok(Ssr {
@@ -169,7 +119,6 @@ where
         })
     }
 
-    /// Execute the Javascript functions and return the result as string.
     pub fn render_to_string(&mut self, params: Option<&str>) -> Result<String, &'static str> {
         let scope = unsafe { &mut *self.scope };
 
@@ -182,7 +131,6 @@ where
 
         let mut rendered = String::new();
 
-        // TODO: transform this into an iterator
         for key in self.fn_map.keys() {
             let result = match self.fn_map[key].call(scope, undef, &[params]) {
                 Some(val) => val,
@@ -224,11 +172,10 @@ where
     }
 }
 
-/// Compile and evaluate an ECMAScript module.
 fn load_module<'a>(
     scope: &mut v8::HandleScope<'a>,
     source: &str,
-    file_name: &str,
+    file_name: &'a str,
 ) -> Result<v8::Local<'a, v8::Module>, &'static str> {
     let source_str = v8::String::new(scope, source).unwrap();
     let file_name_str = v8::String::new(scope, file_name).unwrap();
@@ -261,9 +208,8 @@ fn load_module<'a>(
     Ok(module)
 }
 
-/// Compile and evaluate a CommonJS and IIFE module.
-fn load_commonjs<'a>(
-    scope: &mut v8::HandleScope<'a>,
+fn load_commonjs(
+    scope: &mut v8::HandleScope,
     source: &str,
     file_name: &str,
 ) -> Result<(), &'static str> {
@@ -310,8 +256,7 @@ mod tests {
     fn test_render_simple_html() {
         init_test();
 
-        let source =
-            r##"var SSR = {x: () => "<html><body>Hello, world!</body></html>"};"##.to_string();
+        let source = r##"var SSR = {x: () => "<html><body>Hello, world!</body></html>"};"##;
 
         let mut ssr = Ssr::from(source, "SSR", "cjs").unwrap();
         let html = ssr.render_to_string(None).unwrap();
@@ -323,8 +268,7 @@ mod tests {
     fn test_render_with_params() {
         init_test();
 
-        let source =
-            r##"var SSR = {x: (params) => `<html><body>${params}</body></html>`};"##.to_string();
+        let source = r##"var SSR = {x: (params) => `<html><body>${params}</body></html>`};"##;
 
         let mut ssr = Ssr::from(source, "SSR", "cjs").unwrap();
         let params = r#"{"message": "Hello, parameters!"}"#;
@@ -344,8 +288,7 @@ mod tests {
         export function render() {
             return "<html><body>ESM Hello, world!</body></html>";
         }
-        "##
-        .to_string();
+        "##;
 
         let mut ssr = Ssr::from(source, "render", "esm").unwrap();
         let html = ssr.render_to_string(None).unwrap();
@@ -357,7 +300,7 @@ mod tests {
     fn test_invalid_js() {
         init_test();
 
-        let source = r##"var SSR = {x: () => { throw new Error("Test error"); }};"##.to_string();
+        let source = r##"var SSR = {x: () => { throw new Error("Test error"); }};"##;
 
         let mut ssr = Ssr::from(source, "SSR", "cjs").unwrap();
         let result = ssr.render_to_string(None);

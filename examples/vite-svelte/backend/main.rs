@@ -6,7 +6,7 @@ use std::path::Path;
 
 thread_local! {
     static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-        Ssr::from(
+        Ssr::from(&
             read_to_string(Path::new("./dist/server/server.js").to_str().unwrap()).unwrap(),
             "render", // Make sure the exported function is named "render"
             "esm" // Use ESM module

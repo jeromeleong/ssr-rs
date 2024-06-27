@@ -6,7 +6,7 @@ use tide::{Request, Response};
 
 thread_local! {
     static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(
+            Ssr::from(&
                 read_to_string("./client/dist/ssr/index.js").unwrap(),
                 "SSR",
                 "cjs"

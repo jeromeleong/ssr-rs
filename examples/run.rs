@@ -7,7 +7,7 @@ fn main() {
     Ssr::create_platform();
 
     // This takes roughly 40ms
-    let mut ssr = Ssr::from(source, "SSR", "cjs").unwrap();
+    let mut ssr = Ssr::from(&source, "SSR", "cjs").unwrap();
 
     // This takes roughly 0.5ms
     println!("{}", ssr.render_to_string(None).unwrap());

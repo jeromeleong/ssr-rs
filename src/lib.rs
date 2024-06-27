@@ -27,7 +27,7 @@
 //!
 //!     let source = read_to_string("./path/to/build.js").unwrap();
 //!
-//!     let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
+//!     let mut js = Ssr::from(&source, "entryPoint", "cjs").unwrap();
 //!
 //!     let html = js.render_to_string(None).unwrap();
 //!    
@@ -82,7 +82,7 @@
 //!
 //!     let source = read_to_string("./path/to/build.js").unwrap();
 //!
-//!     let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
+//!     let mut js = Ssr::from(&source, "entryPoint", "cjs").unwrap();
 //!
 //!     let html = js.render_to_string(Some(&props)).unwrap();
 //!    
@@ -109,7 +109,7 @@
 //! thread_local! {
 //!    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
 //!        Ssr::from(
-//!            read_to_string("./client/dist/ssr/index.js").unwrap(),
+//!            &read_to_string("./client/dist/ssr/index.js").unwrap(),
 //!            "SSR",
 //!            "cjs"
 //!            ).unwrap()

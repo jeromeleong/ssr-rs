@@ -16,7 +16,7 @@ fn renders_react_17_exported_as_iife() {
 
     let source = read_to_string("./tests/assets/react-17-iife.js").unwrap();
 
-    let mut js = Ssr::from(source, "", "cjs").unwrap();
+    let mut js = Ssr::from(&source, "", "cjs").unwrap();
 
     let html = js.render_to_string(None).unwrap();
 
@@ -29,7 +29,7 @@ fn renders_react_18_exported_as_iife() {
 
     let source = read_to_string("./tests/assets/react-18-iife.js").unwrap();
 
-    let mut js = Ssr::from(source, "", "cjs").unwrap();
+    let mut js = Ssr::from(&source, "", "cjs").unwrap();
 
     let html = js.render_to_string(None).unwrap();
 

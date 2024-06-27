@@ -7,7 +7,7 @@ use ssr_rs::Ssr;
 
 thread_local! {
     static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(
+            Ssr::from(&
                 read_to_string(Path::new("./dist/server-entry.js").to_str().unwrap()).unwrap(),
                 "",
                 "cjs"

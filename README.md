@@ -11,7 +11,7 @@ It uses an embedded version of the [V8](https://v8.dev/) javascript engine (<a h
 
 Currently it works with [Vite](https://vitejs.dev/), [Webpack](https://webpack.js.org/), [Rspack](https://www.rspack.dev/) and [React 18](https://react.dev/) - Check the examples folder.
 
-> Check <a href="https://github.com/jeromeleong/ssr-rust/blob/main/benches">here</a> the benchmark results.
+> Check <a href="https://git.leongfamily.net/jerome/ssr-rs/blob/main/benches">here</a> the benchmark results.
 
 ## Getting started
 
@@ -36,7 +36,7 @@ fn main() {
 
     let source = read_to_string("./path/to/build.js").unwrap();
 
-    let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
+    let mut js = Ssr::from(&source, "entryPoint", "cjs").unwrap();
 
     let html = js.render_to_string(None).unwrap();
     
@@ -93,7 +93,7 @@ fn main() {
 
     let source = read_to_string("./path/to/build.js").unwrap();
 
-    let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
+    let mut js = Ssr::from(&source, "entryPoint", "cjs").unwrap();
 
     let html = js.render_to_string(Some(&props)).unwrap();
 
@@ -103,7 +103,7 @@ fn main() {
 
 ## Example with actix-web
 
-> Examples with different web frameworks are available in the <a href="https://github.com/jeromeleong/ssr-rust/blob/main/examples" target="_blank">examples</a> folder.
+> Examples with different web frameworks are available in the <a href="https://git.leongfamily.net/jerome/ssr-rs/blob/main/examples" target="_blank">examples</a> folder.
 
 Even though the V8 engine allows accessing the same `isolate` from different threads that is forbidden by this crate for two reasons:
 
@@ -121,7 +121,7 @@ use ssr_rs::Ssr;
 
 thread_local! {
     static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(
+            Ssr::from(&
                 read_to_string("./client/dist/ssr/index.js").unwrap(),
                 "SSR",
                 "cjs"
@@ -166,7 +166,7 @@ Known TODOs:
 
 ## License
 
-This project is licensed under the MIT License - see the <a href="https://github.com/jeromeleong/ssr-rust/blob/main/LICENSE_MIT">LICENSE_MIT</a> || <a href="https://github.com/jeromeleong/ssr-rust/blob/main/LICENSE_APACHE">LICENSE_APACHE</a> file for more information.
+This project is licensed under the MIT License - see the <a href="https://git.leongfamily.net/jerome/ssr-rs/blob/main/LICENSE_MIT">LICENSE_MIT</a> || <a href="https://git.leongfamily.net/jerome/ssr-rs/blob/main/LICENSE_APACHE">LICENSE_APACHE</a> file for more information.
 
 <br>
 
@@ -182,12 +182,12 @@ If you are upgrading from version 0.5.4 or below, you need to modify the `Ssr::f
 
 **Before:**
 ```rust
-let mut js = Ssr::from(source, "entryPoint").unwrap();
+let mut js = Ssr::from(&source, "entryPoint").unwrap();
 ```
 
 **After:**
 ```rust
-let mut js = Ssr::from(source, "entryPoint", "cjs").unwrap();
+let mut js = Ssr::from(&source, "entryPoint", "cjs").unwrap();
 ```
 
 Make sure to update all `Ssr::from` calls in your code to include this third argument.
