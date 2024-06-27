@@ -1,7 +1,7 @@
 # 🚀 Rust server side rendering
 
 [![API](https://docs.rs/ssr_rs/badge.svg)](https://docs.rs/ssr_rs)
-[![codecov](https://codecov.io/gh/Valerioageno/ssr-rs/branch/main/graph/badge.svg?token=O0CZIZAR7X)](https://codecov.io/gh/Valerioageno/ssr-rs)
+[![codecov](https://codecov.io/gh/jeromeleong/ssr-rust/branch/main/graph/badge.svg?token=O0CZIZAR7X)](https://codecov.io/gh/jeromeleong/ssr-rust)
 
 The crate aims to enable server side rendering on rust servers in the simplest and lightest way possible.
 
@@ -11,7 +11,7 @@ It uses an embedded version of the [V8](https://v8.dev/) javascript engine (<a h
 
 Currently it works with [Vite](https://vitejs.dev/), [Webpack](https://webpack.js.org/), [Rspack](https://www.rspack.dev/) and [React 18](https://react.dev/) - Check the examples folder.
 
-> Check <a href="https://github.com/Valerioageno/ssr-rs/blob/main/benches">here</a> the benchmark results.
+> Check <a href="https://github.com/jeromeleong/ssr-rust/blob/main/benches">here</a> the benchmark results.
 
 ## Getting started
 
@@ -19,7 +19,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-ssr_rs = "0.5.4"
+ssr_rs = "0.5.5"
 ```
 
 ## Example
@@ -103,7 +103,7 @@ fn main() {
 
 ## Example with actix-web
 
-> Examples with different web frameworks are available in the <a href="https://github.com/Valerioageno/ssr-rs/blob/main/examples" target="_blank">examples</a> folder.
+> Examples with different web frameworks are available in the <a href="https://github.com/jeromeleong/ssr-rust/blob/main/examples" target="_blank">examples</a> folder.
 
 Even though the V8 engine allows accessing the same `isolate` from different threads that is forbidden by this crate for two reasons:
 
@@ -166,7 +166,7 @@ Known TODOs:
 
 ## License
 
-This project is licensed under the MIT License - see the <a href="https://github.com/Valerioageno/ssr-rs/blob/main/LICENSE_MIT">LICENSE_MIT</a> || <a href="https://github.com/Valerioageno/ssr-rs/blob/main/LICENSE_APACHE">LICENSE_APACHE</a> file for more information.
+This project is licensed under the MIT License - see the <a href="https://github.com/jeromeleong/ssr-rust/blob/main/LICENSE_MIT">LICENSE_MIT</a> || <a href="https://github.com/jeromeleong/ssr-rust/blob/main/LICENSE_APACHE">LICENSE_APACHE</a> file for more information.
 
 <br>
 
