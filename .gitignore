@@ -7,3 +7,4 @@ client2/
 dist
 process.yml
 tarpaulin*
+.DS_Store

@@ -16,7 +16,7 @@ fn renders_svelte_exported_as_esm() {
 
     let source = read_to_string("./tests/assets/svelte-4-esm.js").unwrap();
 
-    let mut js = Ssr::from(source, "","esm").unwrap();
+    let mut js = Ssr::from(source, "", "esm").unwrap();
 
     let html = js.render_to_string(None).unwrap();
 

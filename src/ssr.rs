@@ -51,7 +51,11 @@ where
     ///
     /// See the examples folder for more about using multiple parallel instances for multi-threaded
     /// execution.
-    pub fn from(source: String, entry_point: &str, module_type: &str) -> Result<Self, &'static str> {
+    pub fn from(
+        source: String,
+        entry_point: &str,
+        module_type: &str,
+    ) -> Result<Self, &'static str> {
         let isolate = Box::into_raw(Box::new(v8::Isolate::new(v8::CreateParams::default())));
 
         let handle_scope = unsafe { Box::into_raw(Box::new(v8::HandleScope::new(&mut *isolate))) };
@@ -69,7 +73,9 @@ where
                 let exports = module.get_module_namespace().to_object(scope).unwrap();
                 let mut fn_map: HashMap<String, v8::Local<v8::Function>> = HashMap::new();
 
-                let props = exports.get_own_property_names(scope, Default::default()).unwrap();
+                let props = exports
+                    .get_own_property_names(scope, Default::default())
+                    .unwrap();
                 for i in 0..props.length() {
                     let key = props.get_index(scope, i).unwrap();
                     let key_str = key.to_string(scope).unwrap().to_rust_string_lossy(scope);
@@ -84,10 +90,10 @@ where
                     fn_map,
                     scope: scope_ptr,
                 });
-            },
+            }
             "cjs" => {
                 load_commonjs(scope, &source, "module.js")?;
-            },
+            }
             _ => {
                 return Err("Unsupported module type");
             }
@@ -219,7 +225,11 @@ where
 }
 
 /// Compile and evaluate an ECMAScript module.
-fn load_module<'a>(scope: &mut v8::HandleScope<'a>, source: &str, file_name: &str) -> Result<v8::Local<'a, v8::Module>, &'static str> {
+fn load_module<'a>(
+    scope: &mut v8::HandleScope<'a>,
+    source: &str,
+    file_name: &str,
+) -> Result<v8::Local<'a, v8::Module>, &'static str> {
     let source_str = v8::String::new(scope, source).unwrap();
     let file_name_str = v8::String::new(scope, file_name).unwrap();
     let undefined = v8::undefined(scope).into();
@@ -252,7 +262,11 @@ fn load_module<'a>(scope: &mut v8::HandleScope<'a>, source: &str, file_name: &st
 }
 
 /// Compile and evaluate a CommonJS and IIFE module.
-fn load_commonjs<'a>(scope: &mut v8::HandleScope<'a>, source: &str, file_name: &str) -> Result<(), &'static str> {
+fn load_commonjs<'a>(
+    scope: &mut v8::HandleScope<'a>,
+    source: &str,
+    file_name: &str,
+) -> Result<(), &'static str> {
     let source_str = format!("(function(require, module, exports) {{{}}})", source);
     let source_script = v8::String::new(scope, &source_str).unwrap();
     let file_name_str = v8::String::new(scope, file_name).unwrap();
@@ -296,7 +310,8 @@ mod tests {
     fn test_render_simple_html() {
         init_test();
 
-        let source = r##"var SSR = {x: () => "<html><body>Hello, world!</body></html>"};"##.to_string();
+        let source =
+            r##"var SSR = {x: () => "<html><body>Hello, world!</body></html>"};"##.to_string();
 
         let mut ssr = Ssr::from(source, "SSR", "cjs").unwrap();
         let html = ssr.render_to_string(None).unwrap();
@@ -308,13 +323,17 @@ mod tests {
     fn test_render_with_params() {
         init_test();
 
-        let source = r##"var SSR = {x: (params) => `<html><body>${params}</body></html>`};"##.to_string();
+        let source =
+            r##"var SSR = {x: (params) => `<html><body>${params}</body></html>`};"##.to_string();
 
         let mut ssr = Ssr::from(source, "SSR", "cjs").unwrap();
         let params = r#"{"message": "Hello, parameters!"}"#;
         let html = ssr.render_to_string(Some(params)).unwrap();
 
-        assert_eq!(html, "<html><body>{\"message\": \"Hello, parameters!\"}</body></html>");
+        assert_eq!(
+            html,
+            "<html><body>{\"message\": \"Hello, parameters!\"}</body></html>"
+        );
     }
 
     #[test]
@@ -325,7 +344,8 @@ mod tests {
         export function render() {
             return "<html><body>ESM Hello, world!</body></html>";
         }
-        "##.to_string();
+        "##
+        .to_string();
 
         let mut ssr = Ssr::from(source, "render", "esm").unwrap();
         let html = ssr.render_to_string(None).unwrap();
