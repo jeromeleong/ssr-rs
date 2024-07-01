@@ -22,7 +22,9 @@ name = "ssr_rs"
 path = "src/lib.rs"
 
 [dependencies]
-v8= "0.94.0"
+lru = "0.12.3"
+thread_local = "1.1.8"
+v8= "0.95.0"
 
 [dev-dependencies]
 
@@ -75,8 +77,12 @@ name = "warp"
 path = "examples/warp.rs"
 
 [[example]]
-name = "run"
-path = "examples/run.rs"
+name = "run_iife"
+path = "examples/run_iife.rs"
+
+[[example]]
+name = "run_esm"
+path = "examples/run_esm.rs"
 
 [[example]]
 name = "axum"
@@ -85,7 +91,6 @@ path = "examples/axum.rs"
 [[example]]
 name = "multi"
 path = "examples/multi-thread.rs"
-
 [[example]]
 name = "vite-react"
 path = "examples/vite-react/server.rs"

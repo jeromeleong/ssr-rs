@@ -12,7 +12,7 @@
 //! # Getting started
 //! ```toml
 //! [dependencies]
-//! ssr_rs = "0.5.4"
+//! ssr_rs = "0.5.5"
 //! ```
 //!
 //! # Example
@@ -23,11 +23,10 @@
 //! use std::fs::read_to_string;
 //!
 //! fn main() {
-//!     Ssr::create_platform();
-//!
 //!     let source = read_to_string("./path/to/build.js").unwrap();
 //!
-//!     let mut js = Ssr::from(&source, "entryPoint", "cjs").unwrap();
+//!     let mut js = Ssr::new();
+//!     js.load(&source, "entryPoint", "cjs").unwrap();
 //!
 //!     let html = js.render_to_string(None).unwrap();
 //!    
@@ -70,8 +69,6 @@
 //! use std::fs::read_to_string;
 //!
 //! fn main() {
-//!     Ssr::create_platform();
-//!
 //!     let props = r##"{
 //!       "params": [
 //!            "hello",
@@ -82,9 +79,10 @@
 //!
 //!     let source = read_to_string("./path/to/build.js").unwrap();
 //!
-//!     let mut js = Ssr::from(&source, "entryPoint", "cjs").unwrap();
+//!     let mut js = Ssr::new();
+//!     js.load(&source, "entryPoint", "cjs").unwrap();
 //!
-//!     let html = js.render_to_string(Some(&props)).unwrap();
+//!     let html = js.render_to_string(Some(props)).unwrap();
 //!    
 //!     assert_eq!(html, "<!doctype html><html>...</html>".to_string());
 //! }
@@ -107,19 +105,19 @@
 //! use ssr_rs::Ssr;
 //!
 //! thread_local! {
-//!    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-//!        Ssr::from(
+//!    static SSR: RefCell<Ssr> = RefCell::new({
+//!        let mut ssr = Ssr::new();
+//!        ssr.load(
 //!            &read_to_string("./client/dist/ssr/index.js").unwrap(),
 //!            "SSR",
 //!            "cjs"
-//!            ).unwrap()
-//!    )
-//!}
+//!        ).unwrap();
+//!        ssr
+//!    });
+//! }
 //!
 //! #[actix_web::main]
-//!async fn main() -> std::io::Result<()> {
-//!    Ssr::create_platform();
-//!
+//! async fn main() -> std::io::Result<()> {
 //!    HttpServer::new(|| {
 //!        App::new()
 //!            .service(index)

@@ -5,16 +5,18 @@ use std::fs::read_to_string;
 use std::path::Path;
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-        Ssr::from(&
-            read_to_string(Path::new("./dist/server/server.js").to_str().unwrap()).unwrap(),
-            "render", // Make sure the exported function is named "render"
-            "esm" // Use ESM module
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./dist/server/server.js").to_str().unwrap()).unwrap(),
+            "render",
+            "esm",
         ).unwrap_or_else(|err| {
             eprintln!("Failed to initialize SSR: {}", err);
             std::process::exit(1);
-        })
-    )
+        });
+        ssr
+    });
 }
 
 #[handler]
@@ -33,8 +35,6 @@ async fn index(res: &mut Response) {
         res.render(Text::Plain("Internal Server Error"));
         return;
     }
-
-    //println!("Rendered result: {}", result); // For debugging
 
     let result: serde_json::Value = match serde_json::from_str(&result) {
         Ok(val) => val,
@@ -68,7 +68,6 @@ async fn index(res: &mut Response) {
 
 #[tokio::main]
 async fn main() {
-    Ssr::create_platform();
     let router = Router::new()
         .push(Router::with_path("/client/<**path>").get(StaticDir::new(["./dist/client"])))
         .push(

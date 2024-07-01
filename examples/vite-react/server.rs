@@ -6,19 +6,19 @@ use std::path::Path;
 use ssr_rs::Ssr;
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(&
-                read_to_string(Path::new("./dist/server-entry.js").to_str().unwrap()).unwrap(),
-                "",
-                "cjs"
-                ).unwrap()
-            )
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./dist/server-entry.js").to_str().unwrap()).unwrap(),
+            "SSR",
+            "cjs"
+        ).unwrap();
+        ssr
+    });
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    Ssr::create_platform();
-
     HttpServer::new(|| App::new().service(index))
         .bind("127.0.0.1:8080")?
         .run()

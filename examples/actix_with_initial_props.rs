@@ -1,24 +1,25 @@
+use actix_files as fs;
 use actix_web::{get, http::StatusCode, App, HttpResponse, HttpServer};
 use std::cell::RefCell;
 use std::fs::read_to_string;
-
-use actix_files as fs;
+use std::path::Path;
 
 use ssr_rs::Ssr;
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(&
-                read_to_string("./client/dist/ssr/index.js").unwrap(),
-                "SSR",
-                "cjs"
-                ).unwrap()
-            )
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./tests/assets/react-17-iife.js").to_str().unwrap()).unwrap(),
+            "",
+            "cjs"
+        ).unwrap();
+        ssr
+    });
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    Ssr::create_platform();
     HttpServer::new(|| {
         App::new()
             .service(fs::Files::new("/styles", "client/dist/ssr/styles/").show_files_listing())

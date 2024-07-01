@@ -9,20 +9,20 @@ use ssr_rs::Ssr;
 use std::time::Instant;
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(&
-                read_to_string(Path::new("./dist/ssr/server-build.js").to_str().unwrap()).unwrap(),
-                "Index",
-                "cjs"
-                ).unwrap()
-            )
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./tests/assets/react-17-iife.js").to_str().unwrap()).unwrap(),
+            "",
+            "cjs"
+        ).unwrap();
+        ssr
+    });
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("{:?}", env::current_dir()?);
-
-    Ssr::create_platform();
 
     HttpServer::new(|| {
         App::new()

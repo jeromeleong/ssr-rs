@@ -1,22 +1,24 @@
 use ssr_rs::Ssr;
 use std::cell::RefCell;
 use std::fs::read_to_string;
+use std::path::Path;
 use std::time::Instant;
 use tide::{Request, Response};
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(&
-                read_to_string("./client/dist/ssr/index.js").unwrap(),
-                "SSR",
-                "cjs"
-                ).unwrap()
-            )
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./tests/assets/react-17-iife.js").to_str().unwrap()).unwrap(),
+            "",
+            "cjs"
+        ).unwrap();
+        ssr
+    });
 }
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
-    Ssr::create_platform();
     let mut app = tide::new();
     app.at("/styles/*").serve_dir("client/dist/ssr/styles/")?;
     app.at("/images/*").serve_dir("client/dist/ssr/images/")?;

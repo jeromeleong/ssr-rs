@@ -2,23 +2,24 @@
 use ssr_rs::Ssr;
 use std::cell::RefCell;
 use std::fs::read_to_string;
+use std::path::Path;
 use std::time::Instant;
 use warp::{http::Response, Filter};
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(&
-                read_to_string("./client/dist/ssr/index.js").unwrap(),
-                "SSR",
-                "cjs"
-                ).unwrap()
-            )
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./tests/assets/react-17-iife.js").to_str().unwrap()).unwrap(),
+            "",
+            "cjs"
+        ).unwrap();
+        ssr
+    });
 }
 
 #[tokio::main]
 async fn main() {
-    Ssr::create_platform();
-
     let html = warp::path::end().map(move || {
         let start = Instant::now();
         let result = SSR.with(|ssr| ssr.borrow_mut().render_to_string(None));

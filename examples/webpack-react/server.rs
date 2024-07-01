@@ -1,23 +1,23 @@
 use actix_web::{get, http::StatusCode, App, HttpResponse, HttpServer};
+use ssr_rs::Ssr;
 use std::cell::RefCell;
 use std::fs::read_to_string;
-
-use ssr_rs::Ssr;
+use std::path::Path;
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(&
-                read_to_string("./dist/ssr/index.js").unwrap(),
-                "SSR",
-                "cjs"
-                ).unwrap()
-            )
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./dist/ssr/index.js").to_str().unwrap()).unwrap(),
+            "SSR",
+            "cjs"
+        ).unwrap();
+        ssr
+    });
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    Ssr::create_platform();
-
     HttpServer::new(|| App::new().service(index))
         .bind("127.0.0.1:8080")?
         .run()

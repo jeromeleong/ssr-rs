@@ -2,22 +2,23 @@ use axum::{response::Html, routing::get, Router};
 use ssr_rs::Ssr;
 use std::cell::RefCell;
 use std::fs::read_to_string;
+use std::path::Path;
 use std::time::Instant;
 
 thread_local! {
-    static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-            Ssr::from(&
-                read_to_string("./client/dist/ssr/index.js").unwrap(),
-                "SSR",
-                "cjs"
-                ).unwrap()
-            )
+    static SSR: RefCell<Ssr> = RefCell::new({
+        let mut ssr = Ssr::new();
+        ssr.load(
+            &read_to_string(Path::new("./tests/assets/react-17-iife.js").to_str().unwrap()).unwrap(),
+            "",
+            "cjs"
+        ).unwrap();
+        ssr
+    });
 }
 
 #[tokio::main]
 async fn main() {
-    Ssr::create_platform();
-
     // build our application with a single route
     let app = Router::new().route("/", get(root));
 
