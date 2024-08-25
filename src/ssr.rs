@@ -34,7 +34,7 @@ impl Ssr {
 
         let global_context = {
             let handle_scope = &mut v8::HandleScope::new(&mut isolate);
-            let context = v8::Context::new(handle_scope);
+            let context = v8::Context::new(handle_scope, v8::ContextOptions::default());
             v8::Global::new(handle_scope, context)
         };
 
@@ -195,7 +195,6 @@ impl Ssr {
     ) -> Result<(), String> {
         let source_str = v8::String::new(scope, source).unwrap();
         let file_name_str = v8::String::new(scope, file_name).unwrap();
-        let undefined = v8::undefined(scope);
 
         let origin = v8::ScriptOrigin::new(
             scope,
@@ -204,14 +203,15 @@ impl Ssr {
             0,
             false,
             0,
-            undefined.into(),
+            None,
             false,
             false,
             true,
+            None,
         );
-        let source = v8::script_compiler::Source::new(source_str, Some(&origin));
-        let module =
-            v8::script_compiler::compile_module(scope, source).ok_or("Failed to compile module")?;
+        let mut source = v8::script_compiler::Source::new(source_str, Some(&origin));
+        let module = v8::script_compiler::compile_module(scope, &mut source)
+            .ok_or("Failed to compile module")?;
 
         module
             .instantiate_module(scope, |_, _, _, _| None)
@@ -253,7 +253,6 @@ impl Ssr {
         let source_str = format!("(function(require, module, exports) {{{}}})", source);
         let source_script = v8::String::new(scope, &source_str).unwrap();
         let file_name_str = v8::String::new(scope, file_name).unwrap();
-        let undefined = v8::undefined(scope);
 
         let origin = v8::ScriptOrigin::new(
             scope,
@@ -262,10 +261,11 @@ impl Ssr {
             0,
             false,
             0,
-            undefined.into(),
+            None,
             false,
             false,
             false,
+            None,
         );
         let script = v8::Script::compile(scope, source_script, Some(&origin))
             .ok_or("Failed to compile script")?;
