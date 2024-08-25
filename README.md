@@ -4,20 +4,13 @@
   <img src="https://git.leongfamily.net/Jerome/ssr-rs/raw/branch/main/logo.png" alt="SSR Rust Logo">
 </p>
 
-這 crate 是基於 [Valerioageno的ssr-rs](https://github.com/Valerioageno/ssr-rs) 來進行修改，其功能特點：
+本 crate 是基於 [Valerioageno的ssr-rs](https://github.com/Valerioageno/ssr-rs) 來進行部分修改，旨在以最簡單和最輕量的方式啟用 Rust 伺服器上的伺服器端渲染。它使用嵌入版本的 [V8](https://v8.dev/) JavaScript 引擎（<a href="https://github.com/denoland/rusty_v8" target="_blank">rusty_v8</a>）來解析和評估已建置的 bundle 文件，並返回渲染後的 HTML 字符串。
+
+## 和[Valerioageno的ssr-rs](https://github.com/Valerioageno/ssr-rs)的分別：
 - 移除原有的所有的 `unsafe`
 - 增加對 ES Modules (ESM) 的支持
 - 使用 LRU 緩存機制來優化 JS 加載和渲染性能
 - 使用 Once 來確保 V8 平台的初始化只進行一次，避免了重複初始化的開銷
-
-crate 旨在以最簡單和最輕量的方式啟用 Rust 伺服器上的伺服器端渲染。它使用嵌入版本的 [V8](https://v8.dev/) JavaScript 引擎（<a href="https://github.com/denoland/rusty_v8" target="_blank">rusty_v8</a>）來解析和評估已建置的 bundle 文件，並返回渲染後的 HTML 字符串。
-
-## 功能特點
-
-- 支持 ES Modules (ESM) 和 CommonJS (CJS) 兩種模組系統。
-- 使用 LRU 緩存機制來優化腳本加載和渲染性能。
-- 支持異步渲染和 Promise 處理。
-- 提供簡單易用的 API 接口。
 
 ## 安裝
 
