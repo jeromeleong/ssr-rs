@@ -1,6 +1,6 @@
 [package]
 name = "ssr_rs"
-version = "0.5.5"
+version = "0.5.6"
 authors = ["Jerome <jeromeleong1998@gmail.com>", "Valerio <valerioageno@yahoo.it>"]
 edition = "2021"
 description = "Server side rendering with the v8 engine for parse and evaluate the javascript code"
@@ -22,7 +22,7 @@ name = "ssr_rs"
 path = "src/lib.rs"
 
 [dependencies]
-lru = "0.12.3"
+lru = "0.12.4"
 thread_local = "1.1.8"
 v8= "0.104.0"
 
@@ -53,8 +53,6 @@ salvo = { version = "0.71.1", features = ["serve-static"] }
 serde_json = "1.0.118"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-
-env_logger = "0.11.5"
 
 [[example]]
 name = "actix"

@@ -6,7 +6,7 @@ use std::path::Path;
 
 thread_local! {
     static SSR: RefCell<Ssr> = RefCell::new({
-        let mut ssr = Ssr::new();
+        let ssr = Ssr::new();
         ssr.load(
             &read_to_string(Path::new("./dist/server/server.js").to_str().unwrap()).unwrap(),
             "render",
@@ -22,7 +22,7 @@ thread_local! {
 #[handler]
 async fn index(res: &mut Response) {
     let result = SSR.with(|ssr| {
-        let mut ssr = ssr.borrow_mut();
+        let ssr = ssr.borrow_mut();
         ssr.render_to_string(None).unwrap_or_else(|err| {
             eprintln!("Error rendering to string: {}", err);
             String::new()

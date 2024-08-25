@@ -1,7 +1,6 @@
 name: Publish to Gitea
 
-on:
-  workflow_dispatch:
+on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always

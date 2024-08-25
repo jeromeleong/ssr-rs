@@ -6,7 +6,7 @@ use std::path::Path;
 
 thread_local! {
     static SSR: RefCell<Ssr> = RefCell::new({
-        let mut ssr = Ssr::new();
+        let ssr = Ssr::new();
         ssr.load(
             &read_to_string(Path::new("./dist/ssr/index.js").to_str().unwrap()).unwrap(),
             "SSR",

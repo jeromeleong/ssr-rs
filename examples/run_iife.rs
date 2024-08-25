@@ -6,7 +6,7 @@ fn main() {
     let source = read_to_string("./tests/assets/react-17-iife.js").unwrap();
 
     let start = Instant::now();
-    let mut ssr = Ssr::new();
+    let ssr = Ssr::new();
     ssr.load(&source, "", "cjs").unwrap();
     let duration = start.elapsed();
     println!("Ssr creation and loading took: {:?}", duration);

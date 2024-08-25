@@ -7,7 +7,7 @@ use std::time::Instant;
 
 thread_local! {
     static SSR: RefCell<Ssr> = RefCell::new({
-        let mut ssr = Ssr::new();
+        let ssr = Ssr::new();
         ssr.load(
             &read_to_string(Path::new("./tests/assets/react-17-iife.js").to_str().unwrap()).unwrap(),
             "",
