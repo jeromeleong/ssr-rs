@@ -18,7 +18,7 @@
 
 ```toml
 [dependencies]
-ssr_rs = "0.5.6"
+ssr_rs = { git = "https://github.com/jeromeleong/ssr-rs" }
 ```
 
 ## 使用示例
