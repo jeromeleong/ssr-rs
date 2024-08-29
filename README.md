@@ -1,7 +1,7 @@
 # 🚀 為 JS 前端和 Rust 後端提供服務端渲染的橋樑 - SSR-RS
 
 <p align="center">
-  <img src="https://git.leongfamily.net/Jerome/ssr-rs/raw/branch/main/logo.png" alt="SSR Rust Logo">
+  <img src="https://raw.githubusercontent.com/jeromeleong/ssr-rs/main/logo.png" alt="SSR Rust Logo">
 </p>
 
 本 crate 是基於 [Valerioageno的ssr-rs](https://github.com/Valerioageno/ssr-rs) 來進行部分修改，旨在以最簡單和最輕量的方式啟用 Rust 伺服器上的伺服器端渲染。它使用嵌入版本的 [V8](https://v8.dev/) JavaScript 引擎（<a href="https://github.com/denoland/rusty_v8" target="_blank">rusty_v8</a>）來解析和評估已建置的 bundle 文件，並返回渲染後的 HTML 字符串。
@@ -78,8 +78,8 @@ fn main() {
 
 ## 許可證
 
-本項目採用 MIT 許可證。詳見 [LICENSE](https://git.leongfamily.net/Jerome/ssr-rs/src/branch/main/LICENSE_MIT) 文件。
+本項目採用 MIT 許可證。詳見 [LICENSE](https://github.com/jeromeleong/ssr-rs/blob/main/LICENSE_MIT) 文件。
 
 ## 聯繫方式
 
-如有任何問題或建議，請通過 [GitHub Issues](https://git.leongfamily.net/jerome/ssr-rs/issues) 與我們聯繫。
+如有任何問題或建議，請通過 [GitHub Issues](https://github.com/jeromeleong/ssr-rs/issues) 與我們聯繫。
